@@ -183,14 +183,13 @@ def train_tokenizer():
 
     # --- Build token_bytes lookup for BPB evaluation ---
     print("Tokenizer: building token_bytes lookup...")
-    special_set = set(SPECIAL_TOKENS)
+    special_set = set(special_tokens.values())
     token_bytes_list = []
     for token_id in range(enc.n_vocab):
-        token_str = enc.decode([token_id])
-        if token_str in special_set:
+        if token_id in special_set:
             token_bytes_list.append(0)
         else:
-            token_bytes_list.append(len(token_str.encode("utf-8")))
+            token_bytes_list.append(len(enc.decode_single_token_bytes(token_id)))
     token_bytes_tensor = torch.tensor(token_bytes_list, dtype=torch.int32)
     torch.save(token_bytes_tensor, token_bytes_path)
     print(f"Tokenizer: saved token_bytes to {token_bytes_path}")
